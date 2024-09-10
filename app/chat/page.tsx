@@ -27,19 +27,30 @@ export default function Chat() {
                 { event: 'INSERT', schema: 'public', table: 'chat' },
                 (payload) => {
                     const newMessage = payload.new as ChatMessage
-                    setMessages((prevMessages) => [...prevMessages, newMessage])
+                    setMessages((prevMessages) => {
+                        // 既に同じIDのメッセージがある場合は追加しない
+                        if (prevMessages.some(msg => msg.id === newMessage.id)) {
+                            return prevMessages;
+                        }
+                        const updatedMessages = [...prevMessages, newMessage];
 
-                    const reversedText = newMessage.chat_text.split('').reverse().join('')
-                    const autoMessage: ChatMessage = {
-                        id: Date.now(),
-                        created_at: new Date().toISOString(),
-                        user_id: 'auto',
-                        chat_text: reversedText
-                    }
-                    setMessages((prevMessages) => [...prevMessages, autoMessage])
+                        // 自動メッセージを追加
+                        const reversedText = newMessage.chat_text.split('').reverse().join('')
+                        const autoMessage: ChatMessage = {
+                            id: Date.now(),
+                            created_at: new Date().toISOString(),
+                            user_id: 'auto',
+                            chat_text: reversedText
+                        }
+                        return [...updatedMessages, autoMessage];
+                    })
                 }
             )
-            .subscribe()
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    console.log('Subscribed to realtime changes')
+                }
+            })
 
         return () => {
             supabase.removeChannel(channel)
@@ -74,20 +85,18 @@ export default function Chat() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('chat')
                 .insert({
                     user_id: user.id,
                     chat_text: inputMessage,
                 })
-                .select()
 
             if (error) {
                 console.error('メッセージ送信エラー:', error)
             } else {
                 setInputMessage('')
-                // 新しいメッセージを即座に表示
-                setMessages(prevMessages => [...prevMessages, data[0] as ChatMessage])
+                // 即座の表示処理を削除（リアルタイムイベントで処理される）
             }
         }
     }
