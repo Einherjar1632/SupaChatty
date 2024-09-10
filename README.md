@@ -1,2 +1,6 @@
-# SupaChatty
-SupaChatty
+## 検証内容
+・ログイン（Auth）
+・チャット（Realtime）
+・添付ファイルのアップロード（Storage）
+　※次回誰かがアップロードしたタイミングで消える設定
+・バックエンドの実装（Edge Function）
