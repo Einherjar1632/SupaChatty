@@ -28,6 +28,15 @@ export default function Chat() {
                 (payload) => {
                     const newMessage = payload.new as ChatMessage
                     setMessages((prevMessages) => [...prevMessages, newMessage])
+
+                    const reversedText = newMessage.chat_text.split('').reverse().join('')
+                    const autoMessage: ChatMessage = {
+                        id: Date.now(),
+                        created_at: new Date().toISOString(),
+                        user_id: 'auto',
+                        chat_text: reversedText
+                    }
+                    setMessages((prevMessages) => [...prevMessages, autoMessage])
                 }
             )
             .subscribe()
@@ -84,7 +93,7 @@ export default function Chat() {
     }
 
     const getInitials = (userId: string) => {
-        return userId.slice(0, 2).toUpperCase()
+        return userId === 'auto' ? '自動' : userId.slice(0, 2).toUpperCase()
     }
 
     return (
@@ -97,8 +106,8 @@ export default function Chat() {
                 {messages.map((message) => (
                     <div key={message.id} className="mb-4">
                         <div className="flex items-start">
-                            <div className="bg-gray-300 rounded-full w-10 h-10 flex items-center justify-center mr-2">
-                                <span className="font-bold text-gray-700">{getInitials(message.user_id)}</span>
+                            <div className={`rounded-full w-10 h-10 flex items-center justify-center mr-2 ${message.user_id === 'auto' ? 'bg-yellow-300' : 'bg-gray-300'}`}>
+                                <span className={`font-bold ${message.user_id === 'auto' ? 'text-yellow-800' : 'text-gray-700'}`}>{getInitials(message.user_id)}</span>
                             </div>
                             <div>
                                 <div className="flex items-center">
