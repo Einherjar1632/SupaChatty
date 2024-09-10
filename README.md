@@ -34,8 +34,8 @@
 - id: uuid (主キー)
 - created_at: timestamp
 - user_id: text
-- chat_text: uuid
-- file_url: text
+- chat_text: text
+- attachment_url: text
 
 必ず上記のテーブルを作成し、適切な権限設定とRealtime機能の有効化を行ってください。
 
