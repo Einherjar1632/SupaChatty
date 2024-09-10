@@ -9,11 +9,13 @@ interface ChatMessage {
     created_at: string;
     user_id: string;
     chat_text: string;
+    attachment_url?: string; // 添付ファイルのURLを追加
 }
 
 export default function Chat() {
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [inputMessage, setInputMessage] = useState('')
+    const [file, setFile] = useState<File | null>(null)
     const router = useRouter()
     const supabase = createClientComponentClient()
     const scrollAreaRef = useRef<HTMLDivElement>(null)
@@ -81,22 +83,41 @@ export default function Chat() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (inputMessage.trim() !== '') {
+        if (inputMessage.trim() !== '' || file) {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
+
+            let attachment_url = null
+            if (file) {
+                const { data, error } = await supabase.storage
+                    .from('attachments')
+                    .upload(`${user.id}/${Date.now()}_${file.name}`, file)
+
+                if (error) {
+                    console.error('ファイルアップロードエラー:', error)
+                    return
+                }
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('attachments')
+                    .getPublicUrl(data.path)
+
+                attachment_url = publicUrl
+            }
 
             const { error } = await supabase
                 .from('chat')
                 .insert({
                     user_id: user.id,
                     chat_text: inputMessage,
+                    attachment_url,
                 })
 
             if (error) {
                 console.error('メッセージ送信エラー:', error)
             } else {
                 setInputMessage('')
-                // 即座の表示処理を削除（リアルタイムイベントで処理される）
+                setFile(null)
             }
         }
     }
@@ -124,6 +145,11 @@ export default function Chat() {
                                     <span className="text-xs text-gray-500">{new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                                 <p className="mt-1 text-gray-700">{message.chat_text}</p>
+                                {message.attachment_url && (
+                                    <a href={message.attachment_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                                        添付ファイル
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -131,17 +157,25 @@ export default function Chat() {
             </div>
 
             <div className="border-t p-4">
-                <form onSubmit={handleSendMessage} className="flex">
-                    <input
-                        type="text"
-                        placeholder="メッセージを入力してください..."
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        className="flex-1 mr-2 p-2 border rounded"
-                    />
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                        送信
-                    </button>
+                <form onSubmit={handleSendMessage} className="flex flex-col">
+                    <div className="flex mb-2">
+                        <input
+                            type="text"
+                            placeholder="メッセージを入力してください..."
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            className="flex-1 mr-2 p-2 border rounded"
+                        />
+                        <input
+                            type="file"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                            className="mr-2"
+                        />
+                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+                            送信
+                        </button>
+                    </div>
+                    {file && <p className="text-sm text-gray-600">選択されたファイル: {file.name}</p>}
                 </form>
             </div>
         </div>
