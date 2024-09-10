@@ -24,7 +24,7 @@ export default function SignUp() {
                 },
             })
             if (error) throw error
-            router.push('/auth/verify')
+            router.push('/auth/email-verification')
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message)

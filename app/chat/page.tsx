@@ -115,7 +115,7 @@ export default function Chat() {
     return (
         <div className="flex flex-col h-screen max-w-2xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
             <header className="bg-gray-800 text-white py-4 px-6">
-                <h1 className="text-2xl font-bold">Simple Chat</h1>
+                <h1 className="text-2xl font-bold">チャットページ</h1>
             </header>
 
             <ScrollArea className="flex-1 p-6">
