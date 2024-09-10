@@ -6,6 +6,7 @@
 
 - ログイン認証 (Supabase Auth)
 - リアルタイムチャット (Supabase Realtime)
+  - SupabaseのINSERTイベントを検知し予め購読しておいたチャット画面に自動描画します
 - 添付ファイルのアップロード (Supabase Storage)
   - アップロードされたファイルは次回のファイルアップロード時に自動的に削除されます
 - バックエンド機能 (Supabase Edge Functions)
