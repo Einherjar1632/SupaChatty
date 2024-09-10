@@ -14,5 +14,5 @@ export default function Verify() {
         return () => clearTimeout(timer)
     }, [router])
 
-    return <div>Verifying your email... You will be redirected to the chat in 5 seconds.</div>
+    return <div>Eメールの認証が完了しました、5秒後にチャットページに遷移します。</div>
 }
