@@ -9,7 +9,7 @@ interface ChatMessage {
     created_at: string;
     user_id: string;
     chat_text: string;
-    attachment_url?: string; // 添付ファイルのURLを追加
+    attachment_url?: string;
 }
 
 export default function Chat() {
@@ -35,7 +35,6 @@ export default function Chat() {
                             return prevMessages;
                         }
                         const updatedMessages = [...prevMessages, newMessage];
-
                         // 自動メッセージを追加
                         const reversedText = newMessage.chat_text.split('').reverse().join('')
                         const autoMessage: ChatMessage = {

@@ -13,7 +13,7 @@ export default function SignIn() {
 
     const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        setError(null) // Reset any previous errors
+        setError(null)
 
         const { error } = await supabase.auth.signInWithPassword({
             email,
