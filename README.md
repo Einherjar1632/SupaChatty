@@ -7,6 +7,8 @@
 - ログイン認証 (Supabase Auth)
 - リアルタイムチャット (Supabase Realtime)
   - SupabaseのINSERTイベントを検知し予め購読しておいたチャット画面に自動描画します
+  - 内部的にはINSERTのトリガーを検知しPhoenixChannelを使用しているとの事
+  - [Phoenix Channels](https://hexdocs.pm/phoenix/channels.html)
 - 添付ファイルのアップロード (Supabase Storage)
   - アップロードされたファイルは次回のファイルアップロード時に自動的に削除されます
 - バックエンド機能 (Supabase Edge Functions)
