@@ -24,14 +24,14 @@
 2. 依存関係をインストール: `npm install`
 3. Supabaseプロジェクトを作成し、環境変数を設定
 4. Supabaseでの設定:
-   - `chat` テーブルを作成 (chat.tsxの型を参照)
+   - `chat` テーブルを作成
    - `chat` テーブルに対してselect権限とinsert権限を付与
    - `chat` テーブルのRealtime機能をオンにする
 5. アプリケーションを実行: `npm run dev`
 
 ## Supabaseテーブル設定
 
-`chat` テーブルの構造 (chat.tsxの型に基づく):
+`chat` テーブルの構造:
 
 - id: uuid (主キー)
 - created_at: timestamp
